@@ -1,5 +1,7 @@
 package com.wibeechat.missa.controller.portfolio;
 
+import com.wibeechat.missa.annotation.CurrentUser;
+import com.wibeechat.missa.annotation.LoginRequired;
 import com.wibeechat.missa.dto.portfolio.PortfolioRequest;
 import com.wibeechat.missa.dto.portfolio.PortfolioResponse;
 import com.wibeechat.missa.dto.portfolio.PortfolioDetailResponse;
@@ -26,6 +28,7 @@ public class PortfolioController {
             @ApiResponse(responseCode = "400", description = "포트폴리오 생성 실패")
     })
     @PostMapping
+    @LoginRequired
     public ResponseEntity<PortfolioResponse> createPortfolio(@RequestBody PortfolioRequest portfolioRequest) {
         try {
             log.info("포트폴리오 생성 요청: {}", portfolioRequest);
@@ -44,6 +47,7 @@ public class PortfolioController {
             @ApiResponse(responseCode = "200", description = "포트폴리오 조회 성공"),
             @ApiResponse(responseCode = "404", description = "포트폴리오를 찾을 수 없음")
     })
+    @LoginRequired
     @GetMapping("/{portfolioId}")
     public ResponseEntity<PortfolioDetailResponse> getPortfolio(@PathVariable String portfolioId) {
         try {
@@ -66,7 +70,8 @@ public class PortfolioController {
             @ApiResponse(responseCode = "404", description = "포트폴리오 리스트를 찾을 수 없음")
     })
     @GetMapping("/list")
-    public ResponseEntity<PortfolioResponse> getPortfolioList(@RequestParam String userId) {
+    @LoginRequired
+    public ResponseEntity<PortfolioResponse> getPortfolioList(@CurrentUser String userId) {
         try {
             log.info("포트폴리오 리스트 조회 요청: {}", userId);
 
