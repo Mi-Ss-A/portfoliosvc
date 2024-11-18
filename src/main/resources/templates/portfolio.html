@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Portfolio Dashboard</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+            h1,
+            h2 {
+                color: #333;
+            }
+            .chart {
+                margin: 20px 0;
+                text-align: center;
+            }
+            .details {
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Portfolio Dashboard for [[${userId}]]</h1>
+        <p>Generated on: [[${currentDate}]]</p>
+
+        <h2>Transaction Details</h2>
+        <table border="1" cellpadding="5" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>In/Out</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="data : ${transactionData}">
+                    <td th:text="${data.label}"></td>
+                    <td th:text="${data.amount}"></td>
+                    <td th:text="${data.inOut}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Charts</h2>
+        <div class="chart">
+            <h3>Transaction Amount Chart</h3>
+            <img th:src="${amountChart}" alt="Transaction Amount Chart" />
+        </div>
+        <div class="chart">
+            <h3>Transaction In/Out Chart</h3>
+            <img th:src="${inOutChart}" alt="Transaction In/Out Chart" />
+        </div>
+    </body>
+</html>
