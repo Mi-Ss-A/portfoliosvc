@@ -11,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Base64;
 import java.util.Map;
 
 @Slf4j
@@ -19,15 +18,12 @@ import java.util.Map;
 public class KibanaService {
 
     @Value("${elasticsearch.host}")
-    private String elasticsearchHost; // Kibana 대신 Elasticsearch URL 사용
+    private String elasticsearchHost; // Elasticsearch URL
 
     @Value("${elasticsearch.username}")
     private String elasticsearchUsername; // Elasticsearch 계정
     @Value("${elasticsearch.password}")
     private String elasticsearchPassword; // Elasticsearch 패스워드
-
-    @Value("${elasticsearch.cardIndex:card_trx}")
-    private String cardIndex; // 기본값 card_trx 설정
 
     private final RestTemplate restTemplate;
 
@@ -44,28 +40,19 @@ public class KibanaService {
             default -> "now-15y/M";
         };
 
+        // 데이터 타입별 Elasticsearch Index 설정
         String dataIndex = switch (dataType) {
-                    case "card" -> "card_trx";
-                    case "bank" -> "bank_trx";
-                    default ->  "loan_trx";
+            case "card" -> "card_trx";
+            case "bank" -> "bank_trx";
+            case "loan" -> "loan_trx";
+            default -> throw new IllegalArgumentException("Invalid data type: " + dataType);
         };
 
         // Elasticsearch URL
         String url = elasticsearchHost + "/" + dataIndex + "/_search";
 
-        // 요청 JSON 본문
-        String query = """
-            {
-              "query": {
-                "bool": {
-                  "must": [
-                    { "match": { "user_no": "%s" } },
-                    { "range": { "transaction_date": { "gte": "%s", "lte": "now/M" } } }
-                  ]
-                }
-              }
-            }
-            """.formatted(userNo, timeRange);
+        // 요청 JSON 본문 생성
+        String query = createQuery(userNo, timeRange, dataType);
 
         // HTTP 헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -88,6 +75,37 @@ public class KibanaService {
         } catch (Exception e) {
             log.error("기타 오류 발생: {}", e.getMessage());
             throw new RuntimeException("Elasticsearch API 호출 중 기타 오류 발생: " + e.getMessage(), e);
+        }
+    }
+
+    private String createQuery(String userNo, String timeRange, String dataType) {
+        if ("loan".equals(dataType)) {
+            // Loan의 경우 transaction_date 조건 없음
+            return """
+                {
+                  "query": {
+                    "bool": {
+                      "must": [
+                        { "match": { "user_no": "%s" } }
+                      ]
+                    }
+                  }
+                }
+                """.formatted(userNo);
+        } else {
+            // Card 및 Bank의 경우 transaction_date 조건 포함
+            return """
+                {
+                  "query": {
+                    "bool": {
+                      "must": [
+                        { "match": { "user_no": "%s" } },
+                        { "range": { "transaction_date": { "gte": "%s", "lte": "now/M" } } }
+                      ]
+                    }
+                  }
+                }
+                """.formatted(userNo, timeRange);
         }
     }
 }

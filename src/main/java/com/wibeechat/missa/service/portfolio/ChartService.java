@@ -43,4 +43,19 @@ public class ChartService {
     public String generateInOutChart(List<String> dates, List<Double> inOutValues) throws IOException {
         return createChart("Transaction In/Out Over Time", "Date", "In/Out", dates, inOutValues, "transaction_inout_chart", true);
     }
+
+    // 추가: Bank Transaction Chart 생성
+    public String generateBankTransactionChart(List<String> dates, List<Double> bankAmounts) throws IOException {
+        return createChart("Bank Transactions Over Time", "Date", "Transaction Amount", dates, bankAmounts, "bank_transaction_chart", false);
+    }
+
+    // 추가: Bank In/Out Chart 생성
+    public String generateBankInOutChart(List<String> dates, List<Double> bankInOutValues) throws IOException {
+        return createChart("Bank In/Out Over Time", "Date", "Net In/Out", dates, bankInOutValues, "bank_inout_chart", true);
+    }
+
+    // 추가: Loan Amount Chart 생성
+    public String generateLoanAmountChart(List<String> dates, List<Double> loanAmounts) throws IOException {
+        return createChart("Loan Amounts Over Time", "Date", "Loan Amount", dates, loanAmounts, "loan_amount_chart", false);
+    }
 }

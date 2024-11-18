@@ -15,6 +15,24 @@
                 margin: 20px 0;
                 text-align: center;
             }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+            table,
+            th,
+            td {
+                border: 1px solid #ddd;
+            }
+            th,
+            td {
+                padding: 8px;
+                text-align: left;
+            }
+            th {
+                background-color: #f4f4f4;
+            }
             .details {
                 margin-top: 20px;
             }
@@ -24,8 +42,9 @@
         <h1>Portfolio Dashboard for [[${userId}]]</h1>
         <p>Generated on: [[${currentDate}]]</p>
 
-        <h2>Transaction Details</h2>
-        <table border="1" cellpadding="5" cellspacing="0" width="100%">
+        <!-- Card Section -->
+        <h2>Card Transactions</h2>
+        <table>
             <thead>
                 <tr>
                     <th>Date</th>
@@ -34,7 +53,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="data : ${transactionData}">
+                <tr th:each="data : ${cardTransactionData}">
                     <td th:text="${data.label}"></td>
                     <td th:text="${data.amount}"></td>
                     <td th:text="${data.inOut}"></td>
@@ -42,14 +61,64 @@
             </tbody>
         </table>
 
-        <h2>Charts</h2>
+        <!-- Card Charts -->
         <div class="chart">
-            <h3>Transaction Amount Chart</h3>
-            <img th:src="${amountChart}" alt="Transaction Amount Chart" />
+            <h3>Card Transaction Amount Chart</h3>
+            <img th:src="${cardAmountChart}" alt="Card Transaction Amount Chart" />
         </div>
         <div class="chart">
-            <h3>Transaction In/Out Chart</h3>
-            <img th:src="${inOutChart}" alt="Transaction In/Out Chart" />
+            <h3>Card In/Out Chart</h3>
+            <img th:src="${cardInOutChart}" alt="Card In/Out Chart" />
+        </div>
+
+        <!-- Bank Section -->
+        <h2>Bank Transactions</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="data : ${bankTransactionData}">
+                    <td th:text="${data.label}"></td>
+                    <td th:text="${data.amount}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Bank Charts -->
+        <div class="chart">
+            <h3>Bank Transaction Chart</h3>
+            <img th:src="${bankTransactionChart}" alt="Bank Transaction Chart" />
+        </div>
+        <div class="chart">
+            <h3>Bank In/Out Chart</h3>
+            <img th:src="${bankInOutChart}" alt="Bank In/Out Chart" />
+        </div>
+
+        <!-- Loan Section -->
+        <h2>Loan Transactions</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="data : ${loanTransactionData}">
+                    <td th:text="${data.label}"></td>
+                    <td th:text="${data.amount}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Loan Chart -->
+        <div class="chart">
+            <h3>Loan Amount Chart</h3>
+            <img th:src="${loanAmountChart}" alt="Loan Amount Chart" />
         </div>
     </body>
 </html>
