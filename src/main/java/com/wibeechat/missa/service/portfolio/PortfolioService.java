@@ -1,67 +1,118 @@
 package com.wibeechat.missa.service.portfolio;
 
-import com.wibeechat.missa.dto.portfolio.PortfolioDetailResponse;
-import com.wibeechat.missa.dto.portfolio.PortfolioResponse;
-import com.wibeechat.missa.dto.portfolio.PortfolioRequest;
+import com.wibeechat.missa.dto.portfolio.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collectors;
 
-@Slf4j
 @Service
+@Slf4j
 public class PortfolioService {
 
-    private static final String S3_BASE_URL = "https://s3.amazonaws.com/portfolio/";
+    private final KibanaService kibanaService;
+    private final ChartService chartService;
+    private final HtmlService htmlService;
+    private final PdfService pdfService;
+    private final ExtractTransactionService extractTransactionService;
 
-    // 포트폴리오 생성 및 S3 업로드
-    public PortfolioResponse generateAndUploadPortfolio(String userId) {
-        try {
-            // 포트폴리오 생성 날짜를 기반으로 파일명 설정
-            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String portfolioFileName = userId + "_portfolio_" + timestamp + ".pdf";
-
-            // Kibana 대시보드를 기반으로 포트폴리오 데이터를 가져와 PDF 파일 생성 로직
-            // 예시로 포트폴리오 파일을 생성한다고 가정
-            String s3FileUrl = S3_BASE_URL + portfolioFileName;
-            
-            // 파일 업로드 로직 (여기서는 생략하고 URL만 반환)
-            // 실제 구현 시 AWS SDK를 사용하여 파일을 S3에 업로드합니다.
-
-            log.info("포트폴리오 파일 생성 및 S3 업로드 완료: {}", s3FileUrl);
-            return new PortfolioResponse(s3FileUrl, "포트폴리오 생성 완료");
-        } catch (Exception e) {
-            log.error("포트폴리오 생성 중 오류 발생", e);
-            return new PortfolioResponse("error", "포트폴리오 생성 실패");
-        }
+    public PortfolioService(KibanaService kibanaService, ChartService chartService, HtmlService htmlService,
+                            PdfService pdfService, ExtractTransactionService extractTransactionService) {
+        this.kibanaService = kibanaService;
+        this.chartService = chartService;
+        this.htmlService = htmlService;
+        this.pdfService = pdfService;
+        this.extractTransactionService = extractTransactionService;
     }
 
-    // 포트폴리오 조회
-    public PortfolioDetailResponse getPortfolioDetails(String portfolioId) {
+    public PortfolioResponse generateAndSavePortfolio(String userId, String portfolioData) {
         try {
-            // 포트폴리오 파일 조회 로직
-            String s3FileUrl = S3_BASE_URL + portfolioId + ".pdf";
+            // 1. Kibana에서 데이터 가져오기
+            Map<String, Object> cardData = kibanaService.getTransactionData(userId, portfolioData, "card");
+            Map<String, Object> bankData = kibanaService.getTransactionData(userId, portfolioData, "bank");
+            Map<String, Object> loanData = kibanaService.getTransactionData(userId, portfolioData, "loan");
+            Map<String, Object> fundData = kibanaService.getTransactionData(userId, portfolioData, "fund");
 
-            // 예시로 URL을 반환
-            return new PortfolioDetailResponse(s3FileUrl);
-        } catch (Exception e) {
-            log.error("포트폴리오 조회 중 오류 발생", e);
-            return new PortfolioDetailResponse("포트폴리오 조회 실패");
-        }
-    }
+            // 2. 데이터 처리 및 변환
+            List<String> cardDates = extractTransactionService.extractTransactionDates(cardData);
+            List<Double> cardAmounts = extractTransactionService.extractTransactionAmounts(cardData);
+            List<CardTransactionData> cardTransactionData = extractTransactionService.extractCardTransactionData(cardData);
 
-    // 포트폴리오 리스트 조회
-    public String getPortfolioList(String userId) {
-        try {
-            // 사용자가 생성한 포트폴리오 리스트 조회 로직
-            // 예시로 2개의 포트폴리오 URL을 반환
-            String portfolio1 = S3_BASE_URL + userId + "_portfolio_20231111_120000.pdf";
-            String portfolio2 = S3_BASE_URL + userId + "_portfolio_20231111_130000.pdf";
-            return portfolio1 + ", " + portfolio2;
+            List<MonthlyBankInOutData> monthlyBankInOutData = extractTransactionService.extractMonthlyBankInOutData(bankData);
+            List<LoanTransactionData> loanTransactionData = extractTransactionService.extractLoanTransactionData(loanData);
+            Map<String, Double> fundTransactionTypeMap = extractTransactionService.extractFundTransactionTypeData(fundData);
+            // Map<String, Double>를 List<FundTransactionTypeData>로 변환
+            List<FundTransactionTypeData> fundTransactionTypeData = fundTransactionTypeMap.entrySet()
+            .stream()
+            .map(entry -> new FundTransactionTypeData(entry.getKey(), entry.getValue()))
+            .collect(Collectors.toList());
+
+            List<TransactionTimelineData> transactionTimelineData = extractTransactionService.extractAssetTimeline(fundData, bankData);
+
+            Map<String, Double> assetDistributionMap = Map.of(
+                "Fund", extractTransactionService.extractTotalFundAmount(fundData),
+                "Bank", extractTransactionService.extractLatestBankBalance(bankData)
+            );
+            List<AssetDistributionData> assetDistributionData = assetDistributionMap.entrySet()
+                .stream()
+                .map(entry -> new AssetDistributionData(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+
+            Map<String, Double> repaymentSummaryMap = extractTransactionService.extractLoanRepaymentSummary(loanData);
+            List<RepaymentSummaryData> repaymentSummaryData = repaymentSummaryMap.entrySet()
+                .stream()
+                .map(entry -> new RepaymentSummaryData(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+
+            Map<String, Double> loanStatusMap = extractTransactionService.extractLoanStatusData(loanData);
+            List<LoanStatusData> loanStatusData = loanStatusMap.entrySet()
+                .stream()
+                .map(entry -> new LoanStatusData(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+
+            // 3. 차트 생성
+            String cardChart = chartService.generateAmountChart(cardDates, cardAmounts);
+            String monthlyInOutChart = chartService.generateMonthlyInOutChart(monthlyBankInOutData);
+            String loanChart = chartService.generateLoanAmountChart(
+                extractTransactionService.extractLoanDates(loanData),
+                extractTransactionService.extractLoanAmounts(loanData)
+            );
+            String assetDistributionChart = chartService.generatePieChart("Asset Distribution", assetDistributionMap);
+            String timelineChart = chartService.generateTimelineChart(transactionTimelineData);
+            String fundTypeChart = chartService.generateFundTransactionTypeChart(fundTransactionTypeData);
+            String repaymentSummaryChart = chartService.generateRepaymentSummaryChart(repaymentSummaryMap);
+            String loanStatusChart = chartService.generatePieChart("Loan Status Breakdown", loanStatusMap);
+
+            String htmlContent = htmlService.generateHtmlContent(
+                userId,
+                cardChart,
+                cardTransactionData,
+                monthlyInOutChart,
+                monthlyBankInOutData,
+                loanChart,
+                loanTransactionData,
+                assetDistributionChart,
+                assetDistributionData,
+                timelineChart,
+                transactionTimelineData,
+                repaymentSummaryChart,
+                repaymentSummaryData,
+                loanStatusChart,
+                loanStatusData,
+                fundTypeChart,
+                fundTransactionTypeData
+            );
+
+            // 5. PDF 변환
+            File pdfFile = pdfService.convertHtmlToPdf(htmlContent, userId, portfolioData);
+
+            return new PortfolioResponse(pdfFile.getAbsolutePath(), "Portfolio generated successfully");
+
         } catch (Exception e) {
-            log.error("포트폴리오 리스트 조회 중 오류 발생", e);
-            return "포트폴리오 리스트 조회 실패";
+            log.error("Error generating portfolio", e);
+            return new PortfolioResponse("error", "Portfolio generation failed");
         }
     }
 }
