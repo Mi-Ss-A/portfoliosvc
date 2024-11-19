@@ -45,6 +45,7 @@ public class KibanaService {
             case "card" -> "card_trx";
             case "bank" -> "bank_trx";
             case "loan" -> "loan_trx";
+            case "fund" -> "fund_trx";
             default -> throw new IllegalArgumentException("Invalid data type: " + dataType);
         };
 
@@ -79,7 +80,7 @@ public class KibanaService {
     }
 
     private String createQuery(String userNo, String timeRange, String dataType) {
-        if ("loan".equals(dataType)) {
+        if (("loan".equals(dataType))||("fund".equals(dataType))) {
             // Loan의 경우 transaction_date 조건 없음
             return """
                 {

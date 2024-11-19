@@ -2,123 +2,185 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Portfolio Dashboard</title>
         <style>
             body {
                 font-family: Arial, sans-serif;
-            }
-            h1,
-            h2 {
+                line-height: 1.5;
+                margin: 20px;
                 color: #333;
             }
-            .chart {
-                margin: 20px 0;
+            h1 {
                 text-align: center;
+                font-size: 24px;
+                color: #004085;
+                margin-bottom: 20px;
+            }
+            h2 {
+                font-size: 20px;
+                color: #004085;
+                margin-bottom: 10px;
+            }
+            h3 {
+                font-size: 18px;
+                color: #333;
+                margin-top: 20px;
+            }
+            p {
+                text-align: center;
+                color: #555;
             }
             table {
                 width: 100%;
                 border-collapse: collapse;
-                margin-top: 20px;
-            }
-            table,
-            th,
-            td {
-                border: 1px solid #ddd;
+                margin-top: 10px;
+                margin-bottom: 20px;
             }
             th,
             td {
+                border: 1px solid #ccc;
                 padding: 8px;
                 text-align: left;
             }
             th {
-                background-color: #f4f4f4;
+                background-color: #f2f2f2;
             }
-            .details {
-                margin-top: 20px;
+            tr:hover {
+                background-color: #f9f9f9;
+            }
+            img {
+                display: block;
+                max-width: 100%;
+                margin: 20px auto;
+                border: 1px solid #ccc;
+                padding: 5px;
+            }
+            section {
+                margin-bottom: 40px;
             }
         </style>
     </head>
     <body>
-        <h1>Portfolio Dashboard for [[${userId}]]</h1>
-        <p>Generated on: [[${currentDate}]]</p>
+        <div>
+            <!-- Page Title -->
+            <h1>Portfolio Dashboard for [[${userId}]]</h1>
+            <p>Generated on: [[${currentDate}]]</p>
 
-        <!-- Card Section -->
-        <h2>Card Transactions</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>In/Out</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="data : ${cardTransactionData}">
-                    <td th:text="${data.label}"></td>
-                    <td th:text="${data.amount}"></td>
-                    <td th:text="${data.inOut}"></td>
-                </tr>
-            </tbody>
-        </table>
+            <!-- Card Transaction Section -->
+            <section>
+                <h2>Card Transaction Amount</h2>
+                <img th:src="${cardAmountChart}" alt="Card Transaction Amount Chart" />
+                <h3>Card Transactions</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="data : ${cardTransactionData}">
+                            <td th:text="${data.date}"></td>
+                            <td th:text="${data.amount}"></td>
+                            <td th:text="${data.type}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
 
-        <!-- Card Charts -->
-        <div class="chart">
-            <h3>Card Transaction Amount Chart</h3>
-            <img th:src="${cardAmountChart}" alt="Card Transaction Amount Chart" />
-        </div>
-        <div class="chart">
-            <h3>Card In/Out Chart</h3>
-            <img th:src="${cardInOutChart}" alt="Card In/Out Chart" />
-        </div>
+            <!-- Monthly Bank Inflow/Outflow Section -->
+            <section>
+                <h2>Monthly Bank Inflow/Outflow</h2>
+                <img th:src="${monthlyBankInOutChart}" alt="Monthly Bank Inflow/Outflow Chart" />
+                <h3>Monthly Bank Transactions</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Inflow</th>
+                            <th>Outflow</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="data : ${monthlyBankInOutData}">
+                            <td th:text="${data.month}"></td>
+                            <td th:text="${data.inflow}"></td>
+                            <td th:text="${data.outflow}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
 
-        <!-- Bank Section -->
-        <h2>Bank Transactions</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="data : ${bankTransactionData}">
-                    <td th:text="${data.label}"></td>
-                    <td th:text="${data.amount}"></td>
-                </tr>
-            </tbody>
-        </table>
+            <!-- Loan Transactions Section -->
+            <section>
+                <h2>Loan Transactions</h2>
+                <img th:src="${loanAmountChart}" alt="Loan Transactions Chart" />
+                <h3>Loan Details</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="data : ${loanTransactionData}">
+                            <td th:text="${data.startDate}"></td>
+                            <td th:text="${data.endDate}"></td>
+                            <td th:text="${data.amount}"></td>
+                            <td th:text="${data.status}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
 
-        <!-- Bank Charts -->
-        <div class="chart">
-            <h3>Bank Transaction Chart</h3>
-            <img th:src="${bankTransactionChart}" alt="Bank Transaction Chart" />
-        </div>
-        <div class="chart">
-            <h3>Bank In/Out Chart</h3>
-            <img th:src="${bankInOutChart}" alt="Bank In/Out Chart" />
-        </div>
+            <!-- Asset Distribution Section -->
+            <section>
+                <h2>Asset Distribution</h2>
+                <img th:src="${assetDistributionChart}" alt="Asset Distribution Chart" />
+                <h3>Asset Breakdown</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="entry : ${assetDistributionData}">
+                            <td th:text="${entry.type}"></td>
+                            <td th:text="${entry.amount}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
 
-        <!-- Loan Section -->
-        <h2>Loan Transactions</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="data : ${loanTransactionData}">
-                    <td th:text="${data.label}"></td>
-                    <td th:text="${data.amount}"></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- Loan Chart -->
-        <div class="chart">
-            <h3>Loan Amount Chart</h3>
-            <img th:src="${loanAmountChart}" alt="Loan Amount Chart" />
+            <!-- Transaction Timeline Section -->
+            <section>
+                <h2>Transaction Timeline</h2>
+                <img th:src="${transactionTimelineChart}" alt="Transaction Timeline Chart" />
+                <h3>Timeline Details</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="data : ${transactionTimelineData}">
+                            <td th:text="${data.date}"></td>
+                            <td th:text="${data.amount}"></td>
+                            <td th:text="${data.type}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
         </div>
     </body>
 </html>
