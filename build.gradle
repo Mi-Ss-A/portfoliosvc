@@ -54,6 +54,12 @@ dependencies {
 
 	// chat.js
 	implementation 'org.jfree:jfreechart:1.5.3'
+
+	// s3
+	implementation 'software.amazon.awssdk:s3:2.20.111' // S3 모듈
+	implementation 'software.amazon.awssdk:auth:2.20.111' // 인증 모듈
+	implementation 'software.amazon.awssdk:regions:2.20.111' // 리전 설정 모듈
+
 }
 
 dependencyManagement {

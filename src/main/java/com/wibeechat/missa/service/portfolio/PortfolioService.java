@@ -17,14 +17,16 @@ public class PortfolioService {
     private final HtmlService htmlService;
     private final PdfService pdfService;
     private final ExtractTransactionService extractTransactionService;
+    private final S3Service s3Service;
 
     public PortfolioService(KibanaService kibanaService, ChartService chartService, HtmlService htmlService,
-                            PdfService pdfService, ExtractTransactionService extractTransactionService) {
+                            PdfService pdfService, ExtractTransactionService extractTransactionService, S3Service s3Service) {
         this.kibanaService = kibanaService;
         this.chartService = chartService;
         this.htmlService = htmlService;
         this.pdfService = pdfService;
         this.extractTransactionService = extractTransactionService;
+        this.s3Service = s3Service;
     }
 
     public PortfolioResponse generateAndSavePortfolio(String userId, String portfolioData) {
@@ -108,8 +110,17 @@ public class PortfolioService {
             // 5. PDF 변환
             File pdfFile = pdfService.convertHtmlToPdf(htmlContent, userId, portfolioData);
 
-            return new PortfolioResponse(pdfFile.getAbsolutePath(), "Portfolio generated successfully");
+             // 6. S3에 업로드
+            String keyName = "portfolios/" + userId + "/" + portfolioData + ".pdf";
+            String s3Url = s3Service.uploadFile(pdfFile, keyName);
 
+            // 업로드 후 로컬 파일 삭제 (선택 사항)
+            boolean deleted = pdfFile.delete();
+            if (!deleted) {
+                log.warn("임시 PDF 파일을 삭제하지 못했습니다: " + pdfFile.getAbsolutePath());
+            }
+
+            return new PortfolioResponse(s3Url, "포트폴리오가 성공적으로 생성되었습니다");
         } catch (Exception e) {
             log.error("Error generating portfolio", e);
             return new PortfolioResponse("error", "Portfolio generation failed");

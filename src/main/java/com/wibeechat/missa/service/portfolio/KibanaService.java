@@ -31,6 +31,7 @@ public class KibanaService {
         this.restTemplate = restTemplate;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Map<String, Object> getTransactionData(String userNo, String duration, String dataType) {
         // Duration 변환
         String timeRange = switch (duration) {

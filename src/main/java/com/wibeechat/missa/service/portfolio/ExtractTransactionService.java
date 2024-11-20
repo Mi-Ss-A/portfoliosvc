@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class ExtractTransactionService {
+    @SuppressWarnings("unchecked")
     public List<String> extractTransactionDates(Map<String, Object> cardData) {
         List<String> dates = new ArrayList<>();
         try {
@@ -47,6 +48,7 @@ public class ExtractTransactionService {
         return dates;
     }
 
+    @SuppressWarnings("unchecked")
     public List<Double> extractTransactionAmounts(Map<String, Object> cardData) {
         List<Double> amounts = new ArrayList<>();
         try {
@@ -68,6 +70,7 @@ public class ExtractTransactionService {
         return amounts;
     }
 
+    @SuppressWarnings("unchecked")
     public List<Double> extractTransactionInOut(Map<String, Object> cardData) {
         List<Double> inOutValues = new ArrayList<>();
         try {
@@ -98,6 +101,7 @@ public class ExtractTransactionService {
     }
 
     // 추가 메서드: Loan 데이터를 추출하는 메서드
+    @SuppressWarnings("unchecked")
     public List<String> extractLoanDates(Map<String, Object> loanData) {
         List<String> dates = new ArrayList<>();
         try {
@@ -119,6 +123,7 @@ public class ExtractTransactionService {
         return dates;
     }
 
+    @SuppressWarnings("unchecked")
     public List<Double> extractLoanAmounts(Map<String, Object> loanData) {
         List<Double> amounts = new ArrayList<>();
         try {
@@ -141,6 +146,7 @@ public class ExtractTransactionService {
     }
 
     // 추가 메서드: Bank 데이터를 추출하는 메서드
+    @SuppressWarnings("unchecked")
     public List<String> extractBankDates(Map<String, Object> bankData) {
         List<String> dates = new ArrayList<>();
         try {
@@ -162,6 +168,7 @@ public class ExtractTransactionService {
         return dates;
     }
 
+    @SuppressWarnings("unchecked")
     public List<Double> extractBankAmounts(Map<String, Object> bankData) {
         List<Double> amounts = new ArrayList<>();
         try {
@@ -183,6 +190,7 @@ public class ExtractTransactionService {
         return amounts;
     }
 
+    @SuppressWarnings("unchecked")
     public List<Double> extractBankInOut(Map<String, Object> bankData) {
         List<Double> inOutValues = new ArrayList<>();
         try {
@@ -212,6 +220,7 @@ public class ExtractTransactionService {
         return inOutValues;
     }
 
+    @SuppressWarnings("unchecked")
     public List<String> extractFundTransactionTypes(Map<String, Object> fundData) {
         List<String> transactionTypes = new ArrayList<>();
         try {
@@ -231,6 +240,7 @@ public class ExtractTransactionService {
         return transactionTypes;
     }
     
+    @SuppressWarnings("unchecked")
     public List<Double> extractFundAmounts(Map<String, Object> fundData) {
         List<Double> amounts = new ArrayList<>();
         try {
@@ -250,6 +260,7 @@ public class ExtractTransactionService {
         return amounts;
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, double[]> extractMonthlyBankInOut(Map<String, Object> bankData) {
         Map<String, double[]> monthlyInOut = new HashMap<>();
         try {
@@ -279,6 +290,7 @@ public class ExtractTransactionService {
         return monthlyInOut;
     }
 
+    @SuppressWarnings("unchecked")
     public List<TransactionTimelineData> extractAssetTimeline(Map<String, Object> fundData, Map<String, Object> bankData) {
         List<TransactionTimelineData> timelineData = new ArrayList<>();
         try {
@@ -317,6 +329,7 @@ public class ExtractTransactionService {
         return timelineData;
     }
     
+    @SuppressWarnings("unchecked")
     public double extractLatestBankBalance(Map<String, Object> bankData) {
         double latestBalance = 0;
         try {
@@ -337,6 +350,7 @@ public class ExtractTransactionService {
     }
     
     // Loan Repayment Summary 데이터 추출
+    @SuppressWarnings("unchecked")
     public Map<String, Double> extractLoanRepaymentSummary(Map<String, Object> loanData) {
         Map<String, Double> repaymentSummary = new HashMap<>();
         try {
@@ -359,6 +373,7 @@ public class ExtractTransactionService {
     }
 
     // Loan Status 데이터 추출
+    @SuppressWarnings("unchecked")
     public Map<String, Double> extractLoanStatusData(Map<String, Object> loanData) {
         Map<String, Double> loanStatusData = new HashMap<>();
         try {
@@ -381,6 +396,7 @@ public class ExtractTransactionService {
     }
 
     // Fund Transaction Type 데이터 추출
+    @SuppressWarnings("unchecked")
     public Map<String, Double> extractFundTransactionTypeData(Map<String, Object> fundData) {
         Map<String, Double> fundTransactionTypeData = new HashMap<>();
         try {
@@ -402,6 +418,7 @@ public class ExtractTransactionService {
         return fundTransactionTypeData;
     }
 
+    @SuppressWarnings("unchecked")
     public List<CardTransactionData> extractCardTransactionData(Map<String, Object> cardData) {
         List<CardTransactionData> transactionDataList = new ArrayList<>();
 
@@ -438,7 +455,7 @@ public class ExtractTransactionService {
         return monthlyBankInOutList;
     }
     
-    
+    @SuppressWarnings("unchecked")
     public List<LoanTransactionData> extractLoanTransactionData(Map<String, Object> loanData) {
         List<LoanTransactionData> loanTransactionDataList = new ArrayList<>();
         try {
