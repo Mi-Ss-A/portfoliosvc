@@ -37,6 +37,7 @@ public class ChartService {
     private static final Color SERIES_COLOR_4 = new Color(15, 157, 88);  // Google Green
 
     // Apply Updated Style to a Chart
+    @SuppressWarnings("rawtypes")
     private void applyCIStyle(JFreeChart chart) {
         chart.setBackgroundPaint(BACKGROUND_COLOR);
         chart.getTitle().setFont(new Font("Arial", Font.BOLD, 16));
@@ -73,6 +74,7 @@ public class ChartService {
     }
 
     // Generate a pie chart
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public String generatePieChart(String title, Map<String, Double> data) throws IOException {
         if (data == null || data.isEmpty()) {
             throw new IllegalArgumentException("Data for pie chart must not be null or empty.");
@@ -208,6 +210,7 @@ public class ChartService {
     }
 
     // Generate fund transaction type breakdown chart
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public String generateFundTransactionTypeChart(List<FundTransactionTypeData> fundTransactionTypeData) throws IOException {
         if (fundTransactionTypeData == null || fundTransactionTypeData.isEmpty()) {
             throw new IllegalArgumentException("Fund transaction type data must not be null or empty.");

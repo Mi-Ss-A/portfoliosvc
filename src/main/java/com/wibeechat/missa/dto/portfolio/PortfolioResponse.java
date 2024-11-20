@@ -23,12 +23,6 @@ public class PortfolioResponse {
         this.message = message;
     }
 
-    // 파일 리스트 조회 성공 시 파일 리스트와 메시지를 설정하는 생성자
-    public PortfolioResponse(List<String> portfolioFiles, String message) {
-        this.portfolioFiles = portfolioFiles;
-        this.message = message;
-    }
-
     // 오류 발생 시 메시지만 설정하는 생성자
     public PortfolioResponse(String message) {
         this.message = message;
