@@ -20,7 +20,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
-    @Bean
+        @SuppressWarnings("unused")
+        @Bean
     public OpenAPI openAPI() {
         SecurityScheme cookieAuth = new SecurityScheme()
                 .type(SecurityScheme.Type.APIKEY)

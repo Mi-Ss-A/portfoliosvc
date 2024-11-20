@@ -39,8 +39,27 @@ dependencies {
 	//swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
+	// redis
 	implementation 'org.springframework.session:spring-session-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// html to pdf
+	implementation 'com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10'
+
+	// S3
+	// implementation 'software.amazon.awssdk:s3:2.20.13'
+
+	// Thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:3.1.0'
+
+	// chat.js
+	implementation 'org.jfree:jfreechart:1.5.3'
+
+	// s3
+	implementation 'software.amazon.awssdk:s3:2.20.111' // S3 모듈
+	implementation 'software.amazon.awssdk:auth:2.20.111' // 인증 모듈
+	implementation 'software.amazon.awssdk:regions:2.20.111' // 리전 설정 모듈
+
 }
 
 dependencyManagement {
