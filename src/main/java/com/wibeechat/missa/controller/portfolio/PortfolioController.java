@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Slf4j
 @RestController
@@ -36,7 +37,23 @@ public class PortfolioController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("포트폴리오 생성 실패: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body(new PortfolioResponse("포트폴리오 생성에 실패했습니다."));
+            return ResponseEntity.status(500).body(new PortfolioResponse("Error", "포트폴리오 생성에 실패했습니다."));
         }
     }
+
+    @GetMapping
+    public ResponseEntity<PortfolioResponse> getPortfolios() {
+        try {
+            log.info("포트폴리오 생성 요청");
+            String userId = new String("5c06e46c5e47cfacad16ce1e37f17c09fdbc7072c567613e0b8112173f688a65");
+
+            // 포트폴리오 생성 후 로컬 파일 경로를 응답으로 반환
+            PortfolioResponse response = portfolioService.getPortfolioList(userId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("포트폴리오 생성 실패: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(new PortfolioResponse("Error", "포트폴리오 생성에 실패했습니다."));
+        }
+    }
+
 }
