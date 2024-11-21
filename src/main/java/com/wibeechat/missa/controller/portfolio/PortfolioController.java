@@ -1,5 +1,7 @@
 package com.wibeechat.missa.controller.portfolio;
 
+import com.wibeechat.missa.annotation.CurrentUser;
+import com.wibeechat.missa.annotation.LoginRequired;
 import com.wibeechat.missa.dto.portfolio.PortfolioRequest;
 import com.wibeechat.missa.dto.portfolio.PortfolioResponse;
 import com.wibeechat.missa.service.portfolio.PortfolioService;
@@ -25,14 +27,15 @@ public class PortfolioController {
             @ApiResponse(responseCode = "200", description = "포트폴리오 생성 성공"),
             @ApiResponse(responseCode = "400", description = "포트폴리오 생성 실패")
     })
+    @LoginRequired
     @PostMapping
-    public ResponseEntity<PortfolioResponse> createPortfolio(@RequestBody PortfolioRequest portfolioRequest) {
+    public ResponseEntity<PortfolioResponse> createPortfolio(@CurrentUser String userNo, @RequestBody PortfolioRequest portfolioRequest) {
         try {
             log.info("포트폴리오 생성 요청: {}", portfolioRequest);
 
             // 포트폴리오 생성 후 로컬 파일 경로를 응답으로 반환
             PortfolioResponse response = portfolioService.generateAndSavePortfolio(
-                    portfolioRequest.getUserId(),
+                    userNo,
                     portfolioRequest.getPortfolioData());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -42,13 +45,14 @@ public class PortfolioController {
     }
 
     @GetMapping
-    public ResponseEntity<PortfolioResponse> getPortfolios() {
+    @LoginRequired
+    public ResponseEntity<PortfolioResponse> getPortfolios(@CurrentUser String userNo) {
         try {
             log.info("포트폴리오 생성 요청");
             String userId = new String("5c06e46c5e47cfacad16ce1e37f17c09fdbc7072c567613e0b8112173f688a65");
 
             // 포트폴리오 생성 후 로컬 파일 경로를 응답으로 반환
-            PortfolioResponse response = portfolioService.getPortfolioList(userId);
+            PortfolioResponse response = portfolioService.getPortfolioList(userNo);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("포트폴리오 생성 실패: {}", e.getMessage(), e);
