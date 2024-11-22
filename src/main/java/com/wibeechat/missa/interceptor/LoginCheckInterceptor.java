@@ -4,15 +4,21 @@ import com.wibeechat.missa.annotation.LoginRequired;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-// LoginCheckInterceptor.java
+// LoginCheckInterceptor.java - Redis 세션 검증
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class LoginCheckInterceptor implements HandlerInterceptor {
+
+    private final RedisTemplate<String, Object> redisTemplate;
+    private static final String USER_SESSION_PREFIX = "user:session:";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -22,16 +28,33 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
         HandlerMethod handlerMethod = (HandlerMethod) handler;
 
-        // @LoginRequired 어노테이션이 없으면 인증 체크를 하지 않음
         if (!handlerMethod.hasMethodAnnotation(LoginRequired.class)) {
             return true;
         }
 
-        // 세션이 있는지 확인
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            log.info("미인증 사용자 요청");
+        if (session == null) {
+            log.info("세션이 존재하지 않습니다.");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "로그인이 필요합니다.");
+            return false;
+        }
+
+        String userId = (String) session.getAttribute("userId");
+        if (userId == null) {
+            log.info("세션에 userId가 없습니다.");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "로그인이 필요합니다.");
+            return false;
+        }
+
+        // Redis에서 세션 유효성 검증
+        String redisSessionId = (String) redisTemplate.opsForValue().get(USER_SESSION_PREFIX + userId);
+        boolean isValidSession = redisSessionId != null &&
+                redisTemplate.hasKey("spring:session:sessions:" + redisSessionId);
+
+        if (!isValidSession) {
+            log.info("Redis에 유효한 세션이 없습니다. userId: {}", userId);
+            session.invalidate();
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "세션이 만료되었습니다.");
             return false;
         }
 
