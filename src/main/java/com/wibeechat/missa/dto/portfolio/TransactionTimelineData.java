@@ -7,9 +7,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class TransactionTimelineData {
 
-    private String date;         // 거래 날짜
-    private Double amount;       // 거래 금액
-    private String type;         // 거래 유형 (e.g., Fund, Bank, Loan)
+    private String date; // 거래 날짜
+    private Double amount; // 거래 금액
+    private String type; // 거래 유형 (e.g., Fund, Bank, Loan)
 
     @Override
     public String toString() {
