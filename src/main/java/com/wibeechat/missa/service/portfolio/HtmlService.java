@@ -1,14 +1,21 @@
 package com.wibeechat.missa.service.portfolio;
 
-import org.springframework.stereotype.Service;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.spring6.SpringTemplateEngine;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import com.wibeechat.missa.dto.portfolio.*;
+import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+
+import com.wibeechat.missa.dto.portfolio.AssetDistributionData;
+import com.wibeechat.missa.dto.portfolio.CardTransactionData;
+import com.wibeechat.missa.dto.portfolio.FundTransactionTypeData;
+import com.wibeechat.missa.dto.portfolio.LoanStatusData;
+import com.wibeechat.missa.dto.portfolio.LoanTransactionData;
+import com.wibeechat.missa.dto.portfolio.MonthlyBankInOutData;
+import com.wibeechat.missa.dto.portfolio.RepaymentSummaryData;
+import com.wibeechat.missa.dto.portfolio.TransactionTimelineData;
 
 @Service
 public class HtmlService {
@@ -36,12 +43,12 @@ public class HtmlService {
             String loanStatusChart,
             List<LoanStatusData> loanStatusData,
             String fundTransactionTypeChart,
-            List<FundTransactionTypeData> fundTransactionTypeData
-    ) {
+            List<FundTransactionTypeData> fundTransactionTypeData) {
         // Create Thymeleaf context and add variables
         Context context = new Context();
         context.setVariable("userId", userId);
-        context.setVariable("currentDate", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        context.setVariable("currentDate",
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         // Chart paths or Base64 strings
         context.setVariable("cardAmountChart", cardAmountChart);

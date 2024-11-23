@@ -1,15 +1,17 @@
 package com.wibeechat.missa.interceptor;
 
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
+
 import com.wibeechat.missa.annotation.LoginRequired;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
 
 // LoginCheckInterceptor.java - Redis 세션 검증
 @Slf4j
@@ -21,7 +23,8 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     private static final String USER_SESSION_PREFIX = "user:session:";
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }

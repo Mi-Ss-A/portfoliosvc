@@ -1,5 +1,13 @@
 package com.wibeechat.missa.service.portfolio;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
@@ -14,17 +22,8 @@ import com.wibeechat.missa.dto.portfolio.FundTransactionTypeData;
 import com.wibeechat.missa.dto.portfolio.MonthlyBankInOutData;
 import com.wibeechat.missa.dto.portfolio.TransactionTimelineData;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-
 @Service
 public class ChartService {
-
 
     // Updated Colors
     private static final Color BACKGROUND_COLOR = Color.WHITE;
@@ -32,9 +31,9 @@ public class ChartService {
     private static final Color TITLE_COLOR = new Color(50, 50, 50);
     private static final Color GRIDLINE_COLOR = new Color(200, 200, 200);
     private static final Color SERIES_COLOR_1 = new Color(66, 133, 244); // Google Blue
-    private static final Color SERIES_COLOR_2 = new Color(219, 68, 55);  // Google Red
-    private static final Color SERIES_COLOR_3 = new Color(244, 180, 0);  // Google Yellow
-    private static final Color SERIES_COLOR_4 = new Color(15, 157, 88);  // Google Green
+    private static final Color SERIES_COLOR_2 = new Color(219, 68, 55); // Google Red
+    private static final Color SERIES_COLOR_3 = new Color(244, 180, 0); // Google Yellow
+    private static final Color SERIES_COLOR_4 = new Color(15, 157, 88); // Google Green
 
     // Apply Updated Style to a Chart
     @SuppressWarnings("rawtypes")
@@ -211,7 +210,8 @@ public class ChartService {
 
     // Generate fund transaction type breakdown chart
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public String generateFundTransactionTypeChart(List<FundTransactionTypeData> fundTransactionTypeData) throws IOException {
+    public String generateFundTransactionTypeChart(List<FundTransactionTypeData> fundTransactionTypeData)
+            throws IOException {
         if (fundTransactionTypeData == null || fundTransactionTypeData.isEmpty()) {
             throw new IllegalArgumentException("Fund transaction type data must not be null or empty.");
         }

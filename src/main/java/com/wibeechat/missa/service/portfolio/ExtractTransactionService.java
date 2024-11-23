@@ -16,7 +16,6 @@ import com.wibeechat.missa.dto.portfolio.TransactionTimelineData;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 @Service
 @Slf4j
 public class ExtractTransactionService {
@@ -226,7 +225,7 @@ public class ExtractTransactionService {
         try {
             Map<String, Object> hits = (Map<String, Object>) fundData.get("hits");
             List<Map<String, Object>> hitList = (List<Map<String, Object>>) hits.get("hits");
-    
+
             for (Map<String, Object> hit : hitList) {
                 Map<String, Object> source = (Map<String, Object>) hit.get("_source");
                 String transactionType = (String) source.get("fund_transaction_type");
@@ -239,14 +238,14 @@ public class ExtractTransactionService {
         }
         return transactionTypes;
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Double> extractFundAmounts(Map<String, Object> fundData) {
         List<Double> amounts = new ArrayList<>();
         try {
             Map<String, Object> hits = (Map<String, Object>) fundData.get("hits");
             List<Map<String, Object>> hitList = (List<Map<String, Object>>) hits.get("hits");
-    
+
             for (Map<String, Object> hit : hitList) {
                 Map<String, Object> source = (Map<String, Object>) hit.get("_source");
                 Number fundAmount = (Number) source.get("fund_amount");
@@ -275,7 +274,7 @@ public class ExtractTransactionService {
 
                 if (transactionDate != null && inOut != null && amount != null) {
                     String month = transactionDate.substring(0, 7); // "YYYY-MM"
-                    double[] values = monthlyInOut.getOrDefault(month, new double[]{0, 0});
+                    double[] values = monthlyInOut.getOrDefault(month, new double[] { 0, 0 });
                     if (inOut == 1) {
                         values[0] += amount.doubleValue(); // 입금
                     } else {
@@ -291,7 +290,8 @@ public class ExtractTransactionService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<TransactionTimelineData> extractAssetTimeline(Map<String, Object> fundData, Map<String, Object> bankData) {
+    public List<TransactionTimelineData> extractAssetTimeline(Map<String, Object> fundData,
+            Map<String, Object> bankData) {
         List<TransactionTimelineData> timelineData = new ArrayList<>();
         try {
             // Fund 데이터 처리
@@ -305,7 +305,7 @@ public class ExtractTransactionService {
                     timelineData.add(new TransactionTimelineData(transactionDate, amount.doubleValue(), "Fund"));
                 }
             }
-    
+
             // Bank 데이터 처리
             Map<String, Object> bankHits = (Map<String, Object>) bankData.get("hits");
             List<Map<String, Object>> bankHitList = (List<Map<String, Object>>) bankHits.get("hits");
@@ -319,23 +319,23 @@ public class ExtractTransactionService {
                     timelineData.add(new TransactionTimelineData(transactionDate, adjustedAmount, "Bank"));
                 }
             }
-    
+
             // 날짜순 정렬
             timelineData.sort(Comparator.comparing(TransactionTimelineData::getDate));
-    
+
         } catch (Exception e) {
             log.error("Asset timeline data 추출 중 오류 발생: {}", e.getMessage());
         }
         return timelineData;
     }
-    
+
     @SuppressWarnings("unchecked")
     public double extractLatestBankBalance(Map<String, Object> bankData) {
         double latestBalance = 0;
         try {
             Map<String, Object> hits = (Map<String, Object>) bankData.get("hits");
             List<Map<String, Object>> hitList = (List<Map<String, Object>>) hits.get("hits");
-    
+
             for (Map<String, Object> hit : hitList) {
                 Map<String, Object> source = (Map<String, Object>) hit.get("_source");
                 Number balance = (Number) source.get("transaction_after_balance_amount");
@@ -348,7 +348,7 @@ public class ExtractTransactionService {
         }
         return latestBalance;
     }
-    
+
     // Loan Repayment Summary 데이터 추출
     @SuppressWarnings("unchecked")
     public Map<String, Double> extractLoanRepaymentSummary(Map<String, Object> loanData) {
@@ -422,7 +422,8 @@ public class ExtractTransactionService {
     public List<CardTransactionData> extractCardTransactionData(Map<String, Object> cardData) {
         List<CardTransactionData> transactionDataList = new ArrayList<>();
 
-        List<Map<String, Object>> hits = (List<Map<String, Object>>) ((Map<String, Object>) cardData.get("hits")).get("hits");
+        List<Map<String, Object>> hits = (List<Map<String, Object>>) ((Map<String, Object>) cardData.get("hits"))
+                .get("hits");
         for (Map<String, Object> hit : hits) {
             Map<String, Object> source = (Map<String, Object>) hit.get("_source");
             CardTransactionData transactionData = new CardTransactionData();
@@ -435,16 +436,16 @@ public class ExtractTransactionService {
 
         return transactionDataList;
     }
-    
+
     public List<MonthlyBankInOutData> extractMonthlyBankInOutAsList(Map<String, Object> bankData) {
         List<MonthlyBankInOutData> monthlyBankInOutList = new ArrayList<>();
         try {
             Map<String, double[]> monthlyBankInOut = extractMonthlyBankInOut(bankData);
-    
+
             for (Map.Entry<String, double[]> entry : monthlyBankInOut.entrySet()) {
                 String month = entry.getKey();
                 double[] values = entry.getValue();
-    
+
                 // DTO로 변환하여 리스트에 추가
                 MonthlyBankInOutData monthlyData = new MonthlyBankInOutData(month, values[0], values[1]);
                 monthlyBankInOutList.add(monthlyData);
@@ -454,29 +455,28 @@ public class ExtractTransactionService {
         }
         return monthlyBankInOutList;
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<LoanTransactionData> extractLoanTransactionData(Map<String, Object> loanData) {
         List<LoanTransactionData> loanTransactionDataList = new ArrayList<>();
         try {
             Map<String, Object> hits = (Map<String, Object>) loanData.get("hits");
             List<Map<String, Object>> hitList = (List<Map<String, Object>>) hits.get("hits");
-    
+
             for (Map<String, Object> hit : hitList) {
                 Map<String, Object> source = (Map<String, Object>) hit.get("_source");
                 String startDate = (String) source.get("contract_start_date");
                 String endDate = (String) source.get("contract_end_date");
                 Number contractAmount = (Number) source.get("loan_contract_amount");
                 String loanStatus = (String) source.get("loan_status");
-    
+
                 if (startDate != null && endDate != null && contractAmount != null && loanStatus != null) {
                     String status = loanStatus.equals("A") ? "Active" : "Inactive";
                     LoanTransactionData loanTransaction = new LoanTransactionData(
-                        startDate,
-                        endDate,
-                        contractAmount.doubleValue(),
-                        status
-                    );
+                            startDate,
+                            endDate,
+                            contractAmount.doubleValue(),
+                            status);
                     loanTransactionDataList.add(loanTransaction);
                 }
             }
@@ -485,7 +485,7 @@ public class ExtractTransactionService {
         }
         return loanTransactionDataList;
     }
-    
+
     /**
      * Extract Monthly Bank Inflow and Outflow Data as DTOs
      *
