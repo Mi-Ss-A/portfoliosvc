@@ -1,0 +1,11 @@
+.idea
+.git
+.gitignore
+README.md
+README.old.md
+Dockerfile
+Jenkinsfile
+build/
+bin/
+.gradle/
+.vscode/
