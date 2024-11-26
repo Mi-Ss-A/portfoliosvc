@@ -1,6 +1,5 @@
 package com.wibeechat.missa.interceptor;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -11,20 +10,16 @@ import com.wibeechat.missa.annotation.LoginRequired;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 // LoginCheckInterceptor.java - Redis 세션 검증
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class LoginCheckInterceptor implements HandlerInterceptor {
 
     private final RedisTemplate<String, Object> redisTemplate;
-
-    // 생성자에서 @Qualifier를 통해 특정 Bean을 명시적으로 주입
-    public LoginCheckInterceptor(@Qualifier("redisTemplateSession") RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
-    
     private static final String USER_SESSION_PREFIX = "user:session:";
 
     @Override
