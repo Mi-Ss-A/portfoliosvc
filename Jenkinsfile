@@ -5,7 +5,7 @@ pipeline {
         IMAGE_NAME = "been980804/wibee-portfoliosvc"
         DEPLOYMENT_REPO = 'https://github.com/Mi-Ss-A/wibeechat-argocd-config'
         GIT_CREDENTIALS = credentials('git-token')
-        TAG = "test-${BUILD_NUMBER}"
+        TAG = "test-${BUILD_NUMBER}" // Jenkins 빌드 넘버로 자동 증가되는 태그
         DOCKER_IMAGE = "${IMAGE_NAME}:${TAG}"
     }
 
@@ -30,25 +30,28 @@ pipeline {
         stage('Delete Older Images') {
             steps {
                 script {
-                    sh '''
-                    # 현재 빌드된 이미지와 직전 버전 태그 계산
-                    IMAGE_NAME="${IMAGE_NAME}"
-                    CURRENT_TAG="${TAG}"
-                    PREVIOUS_TAG="test-$(( ${BUILD_NUMBER} - 1 ))"
+                    // 현재와 직전 이미지를 유지하고 나머지 삭제
+                    def currentTag = "test-${env.BUILD_NUMBER}"
+                    def previousTag = "test-${env.BUILD_NUMBER.toInteger() - 1}"
 
-                    echo "현재 유지할 이미지 태그: ${CURRENT_TAG}, ${PREVIOUS_TAG}"
+                    echo "현재 유지할 이미지 태그: ${currentTag}, ${previousTag}"
+
+                    sh """
+                    IMAGE_NAME="${IMAGE_NAME}"
+                    CURRENT_TAG="${currentTag}"
+                    PREVIOUS_TAG="${previousTag}"
 
                     # 모든 이미지 목록 가져오기
                     docker images --format '{{.Repository}}:{{.Tag}}' | grep "$IMAGE_NAME" | while read -r IMAGE; do
                         # 유지할 태그인지 확인
-                        if [[ "$IMAGE" == *:$CURRENT_TAG || "$IMAGE" == *:$PREVIOUS_TAG ]]; then
-                            echo "유지할 이미지: $IMAGE"
+                        if [[ "\$IMAGE" == *:\$CURRENT_TAG || "\$IMAGE" == *:\$PREVIOUS_TAG ]]; then
+                            echo "유지할 이미지: \$IMAGE"
                         else
-                            echo "삭제할 이미지: $IMAGE"
-                            docker rmi -f "$IMAGE" || echo "이미지 삭제 실패: $IMAGE"
+                            echo "삭제할 이미지: \$IMAGE"
+                            docker rmi -f "\$IMAGE" || echo "이미지 삭제 실패: \$IMAGE"
                         fi
                     done
-                    '''
+                    """
                 }
             }
         }
