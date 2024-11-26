@@ -52,7 +52,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         // Redis에서 세션 유효성 검증
         String redisSessionId = (String) redisTemplate.opsForValue().get(USER_SESSION_PREFIX + userId);
         boolean isValidSession = redisSessionId != null &&
-                redisTemplate.hasKey("spring:session:sessions:" + redisSessionId);
+                redisTemplate.hasKey(USER_SESSION_PREFIX + userId);
 
         if (!isValidSession) {
             log.info("Redis에 유효한 세션이 없습니다. userId: {}", userId);
