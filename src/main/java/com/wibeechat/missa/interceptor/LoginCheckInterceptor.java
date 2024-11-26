@@ -1,5 +1,6 @@
 package com.wibeechat.missa.interceptor;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class LoginCheckInterceptor implements HandlerInterceptor {
 
+    @Qualifier("redisTemplateSession")
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String USER_SESSION_PREFIX = "user:session:";
 
