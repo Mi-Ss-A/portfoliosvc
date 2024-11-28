@@ -1,5 +1,6 @@
 package com.wibeechat.missa.service.portfolio;
 
+import java.util.Base64;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -59,7 +60,8 @@ public class KibanaService {
     // HTTP 헤더 설정
     HttpHeaders headers = new HttpHeaders();
     headers.set("Content-Type", "application/json");
-    headers.setBasicAuth(elasticsearchUsername, elasticsearchPassword); // Elasticsearch 인증
+    String authHeader = "Basic " + Base64.getEncoder().encodeToString((elasticsearchUsername + ":" + elasticsearchPassword).getBytes());
+    headers.set("Authorization", authHeader);
 
     HttpEntity<String> requestEntity = new HttpEntity<>(query, headers);
 
