@@ -49,7 +49,7 @@ public class PortfolioController {
         }
     }
 
-    @GetMapping
+    @PostMapping("list")
     public ResponseEntity<PortfolioResponse> getPortfolios(@RequestBody PortfolioRequest portfolioRequest) {
         try {
             log.info("포트폴리오 요청");
