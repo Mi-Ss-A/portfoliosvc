@@ -1,7 +1,6 @@
 package com.wibeechat.missa.controller.portfolio;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +48,7 @@ public class PortfolioController {
         }
     }
 
-    @GetMapping
+    @PostMapping("list")
     public ResponseEntity<PortfolioResponse> getPortfolios(@RequestBody PortfolioRequest portfolioRequest) {
         try {
             log.info("포트폴리오 요청");
