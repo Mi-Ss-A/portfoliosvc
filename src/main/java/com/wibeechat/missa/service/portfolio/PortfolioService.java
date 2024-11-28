@@ -42,13 +42,13 @@ public class PortfolioService {
                 this.s3Service = s3Service;
         }
 
-        public PortfolioResponse generateAndSavePortfolio(String userId, String portfolioData) {
+        public PortfolioResponse generateAndSavePortfolio(String userId, String period) {
                 try {
                         // 1. Kibana에서 데이터 가져오기
-                        Map<String, Object> cardData = kibanaService.getTransactionData(userId, portfolioData, "card");
-                        Map<String, Object> bankData = kibanaService.getTransactionData(userId, portfolioData, "bank");
-                        Map<String, Object> loanData = kibanaService.getTransactionData(userId, portfolioData, "loan");
-                        Map<String, Object> fundData = kibanaService.getTransactionData(userId, portfolioData, "fund");
+                        Map<String, Object> cardData = kibanaService.getTransactionData(userId, period, "card");
+                        Map<String, Object> bankData = kibanaService.getTransactionData(userId, period, "bank");
+                        Map<String, Object> loanData = kibanaService.getTransactionData(userId, period, "loan");
+                        Map<String, Object> fundData = kibanaService.getTransactionData(userId, period, "fund");
 
                         // 2. 데이터 처리 및 변환
                         List<String> cardDates = extractTransactionService.extractTransactionDates(cardData);
@@ -125,10 +125,10 @@ public class PortfolioService {
                                         fundTransactionTypeData);
 
                         // 5. PDF 변환
-                        File pdfFile = pdfService.convertHtmlToPdf(htmlContent, userId, portfolioData);
+                        File pdfFile = pdfService.convertHtmlToPdf(htmlContent, userId, period);
 
                         // 6. S3에 업로드
-                        String keyName = "portfolios/" + userId + "/" + portfolioData + ".pdf";
+                        String keyName = "portfolios/" + userId + "/" + period + ".pdf";
                         String s3Url = s3Service.uploadFile(pdfFile, keyName);
 
                         // 업로드 후 로컬 파일 삭제 (선택 사항)
