@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wibeechat.missa.annotation.CurrentUser;
-import com.wibeechat.missa.annotation.LoginRequired;
+import com.wibeechat.missa.config.RedisSessionListener;
 import com.wibeechat.missa.dto.portfolio.PortfolioRequest;
 import com.wibeechat.missa.dto.portfolio.PortfolioResponse;
 import com.wibeechat.missa.service.portfolio.PortfolioService;
@@ -26,23 +25,23 @@ import lombok.extern.slf4j.Slf4j;
 public class PortfolioController {
 
     private final PortfolioService portfolioService;
+    private final RedisSessionListener redisSessionListener;
 
     @Operation(summary = "포트폴리오 생성", description = "포트폴리오를 생성하고 로컬에 저장된 경로를 반환합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "포트폴리오 생성 성공"),
             @ApiResponse(responseCode = "400", description = "포트폴리오 생성 실패")
     })
-    @LoginRequired
     @PostMapping
-    public ResponseEntity<PortfolioResponse> createPortfolio(@CurrentUser String userNo,
+    public ResponseEntity<PortfolioResponse> createPortfolio(
             @RequestBody PortfolioRequest portfolioRequest) {
         try {
             log.info("포트폴리오 생성 요청: {}", portfolioRequest);
-
+            String userNo = redisSessionListener.getUserId(portfolioRequest.getRedisSessionId());
             // 포트폴리오 생성 후 로컬 파일 경로를 응답으로 반환
             PortfolioResponse response = portfolioService.generateAndSavePortfolio(
                     userNo,
-                    portfolioRequest.getPortfolioData());
+                    portfolioRequest.getPeriod());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("포트폴리오 생성 실패: {}", e.getMessage(), e);
@@ -51,11 +50,10 @@ public class PortfolioController {
     }
 
     @GetMapping
-    @LoginRequired
-    public ResponseEntity<PortfolioResponse> getPortfolios(@CurrentUser String userNo) {
+    public ResponseEntity<PortfolioResponse> getPortfolios(@RequestBody PortfolioRequest portfolioRequest) {
         try {
-            log.info("포트폴리오 생성 요청");
-
+            log.info("포트폴리오 요청");
+            String userNo = redisSessionListener.getUserId(portfolioRequest.getRedisSessionId());
             // 포트폴리오 생성 후 로컬 파일 경로를 응답으로 반환
             PortfolioResponse response = portfolioService.getPortfolioList(userNo);
             return ResponseEntity.ok(response);
