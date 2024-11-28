@@ -65,4 +65,14 @@ public class RedisSessionListener {
             log.error("TTL 갱신 오류: {}", e.getMessage());
         }
     }
+
+    public String getUserId(String redisSessionId) {
+        try {
+            // Redis에서 HTTP 세션 ID에 매핑된 사용자 ID 또는 Redis 세션 ID 조회
+            return (String) redisTemplate.opsForValue().get(SESSION_USER_PREFIX + redisSessionId);
+        } catch (Exception e) {
+            log.error("Redis 세션 ID 조회 오류: {}", e.getMessage());
+            return null;
+        }
+    }
 }
