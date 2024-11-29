@@ -39,7 +39,7 @@ public class ChartService {
     @SuppressWarnings("rawtypes")
     private void applyCIStyle(JFreeChart chart) {
         chart.setBackgroundPaint(BACKGROUND_COLOR);
-        chart.getTitle().setFont(new Font("Arial", Font.BOLD, 16));
+        chart.getTitle().setFont(new Font("Liberation Sans", Font.BOLD, 16));
         chart.getTitle().setPaint(TITLE_COLOR);
 
         Plot plot = chart.getPlot();
@@ -55,7 +55,7 @@ public class ChartService {
         } else if (plot instanceof PiePlot) {
             PiePlot piePlot = (PiePlot) plot;
             piePlot.setBackgroundPaint(PLOT_BACKGROUND_COLOR);
-            piePlot.setLabelFont(new Font("Arial", Font.PLAIN, 12));
+            piePlot.setLabelFont(new Font("Liberation Sans", Font.PLAIN, 12));
             piePlot.setSectionPaint(0, SERIES_COLOR_1);
             piePlot.setSectionPaint(1, SERIES_COLOR_2);
             piePlot.setSectionPaint(2, SERIES_COLOR_3);
