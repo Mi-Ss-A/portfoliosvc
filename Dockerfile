@@ -20,4 +20,4 @@ COPY --from=builder /app/build/libs/missa-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8081
 
 # 헤드리스 모드로 실행
-ENTRYPOINT ["java", "-Djava.awt.headless=true", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
