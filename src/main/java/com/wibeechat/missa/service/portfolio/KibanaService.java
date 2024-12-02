@@ -91,7 +91,8 @@ public class KibanaService {
                   { "match": { "user_no": "%s" } }
                 ]
               }
-            }
+            },
+          "size": 1000
           }
           """.formatted(userNo);
     } else {
@@ -105,7 +106,8 @@ public class KibanaService {
                   { "range": { "transaction_date": { "gte": "%s", "lte": "now/M" } } }
                 ]
               }
-            }
+            },
+          "size": 1000
           }
           """.formatted(userNo, timeRange);
     }
